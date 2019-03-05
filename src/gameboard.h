@@ -21,15 +21,13 @@ typedef std::array <int, BOARDSIZE*BOARDSIZE> board_type;
 class GameBoard {
 
 	// std::array <int, BOARDSIZE*BOARDSIZE> current_board;
-	board_type 					current_board;
-	board_type					player_1_board;
-	board_type					player_2_board;
-	int 						who_won;
-	int 						is_game_over;
-	std::array<int, BOARDSIZE> 	is_row_filled;
-	std::array<int, BOARDSIZE> 	is_column_filled;
-	std::array<int, 2>			is_diagonal_filled; //assuming 2-D board
-	char 						colStart = 'A'; //zero-th column name
+	board_type 							current_board;
+	board_type							player_1_board;
+	board_type							player_2_board;
+	int 								who_won;
+	int 								is_game_over;
+	std::array<int, 2*BOARDSIZE + 2> 	is_line_filled;
+	char 								colStart = 'A'; //zero-th column name
 
 public:
 	GameBoard();

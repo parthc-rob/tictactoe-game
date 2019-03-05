@@ -13,11 +13,9 @@ GameBoard::GameBoard() { //initialize as blank
 	this->current_board = _reset_board(this->current_board);
 
 	//defaults
-	this->who_won 				= OCC_PLAYER_1;
-	this->is_game_over 			= UNOCCUPIED;
-	this->is_row_filled 		= { true };
-	this->is_column_filled 		= { true };
-	this->is_diagonal_filled	= { true };
+	this->who_won 				= OCC_PLAYER_MIX;
+	this->is_game_over 			= GAME_NOT_OVER;
+	this->is_line_filled		= { true };
 
 }
 
@@ -44,16 +42,6 @@ void GameBoard::showBoard() {
 
 int GameBoard::checkFilledRow( int num_row ) {
 
-	// for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) {
-	// 	if ( this->is_row_filled.at(num_row) == true ) {
-	// 		if ( this->current_board.at(num_row*BOARDSIZE) == OCC_PLAYER_1)
-	// 			return OCC_PLAYER_1;
-	// 		else if ( current_board.at(num_row*BOARDSIZE) == OCC_PLAYER_2)
-	// 			return OCC_PLAYER_2;
-	// 	}
-	// }
-	// return UNOCCUPIED;
-
 	int row_ownership = OCC_PLAYER_MIX;
 	for ( auto num_column = 0; num_column < BOARDSIZE; num_column++ ) {
 		if ( this->player_1_board.at(num_column + num_row*BOARDSIZE) != UNOCCUPIED ) {
@@ -64,16 +52,6 @@ int GameBoard::checkFilledRow( int num_row ) {
 		}
 	}
 	return int(row_ownership/BOARDSIZE); // return 0 if no full ownership
-
-	// if ( off_diagonal_ownership == BOARDSIZE*OCC_PLAYER_1) {
-	// 	return OCC_PLAYER_1;
-	// }
-	// else if ( off_diagonal_ownership == BOARDSIZE*OCC_PLAYER_2) {
-	// 	return OCC_PLAYER_2;
-	// }
-	// else {
-	// 	return off_diagonal_ownership;
-	// }
 }
 
 int GameBoard::checkFilledColumn( int num_column ) {
@@ -134,76 +112,29 @@ int GameBoard::isGameOver() {
 				this->player_1_board.at(num_column + num_row*BOARDSIZE) == UNOCCUPIED
 				|| this->player_2_board.at(num_column + num_row*BOARDSIZE) == UNOCCUPIED
 				) {
-				this->is_row_filled[num_row] 		= this->checkFilledRow(num_row);
-				this->is_column_filled[num_column] 	= this->checkFilledColumn(num_column);
+				this->is_line_filled[num_row] =
+					this->checkFilledRow(num_row);
 
-				if ( num_row == num_column ) {
-					this->is_diagonal_filled[0] = this->checkLeftRightDiagonal();
-				}
-				else if ( num_row == BOARDSIZE - 1 - num_column ) {
-					this->is_diagonal_filled[1] = this->checkRightLeftDiagonal();
-				}
+				this->is_line_filled[BOARDSIZE + num_column] =
+					this->checkFilledColumn(num_column);
 			}
 		}
 	}
+	this->is_line_filled[2*BOARDSIZE] =
+		this->checkLeftRightDiagonal();
+
+	this->is_line_filled[2*BOARDSIZE + 1] =
+		this->checkRightLeftDiagonal();
+
 	int value = 0;
-	for ( int iterator = 0; iterator<this->is_row_filled.size(); iterator++) {
-		value = this->is_row_filled[iterator];
-		if(value != OCC_PLAYER_MIX) {
+	for ( int iterator = 0; iterator < this->is_line_filled.size(); iterator++ ) {
+		value = this->is_line_filled[iterator];
+		if( value != OCC_PLAYER_MIX ) {
 			this->who_won = value;
 			return value;
 		}
 	}
 
-	for ( int iterator = 0; iterator<this->is_column_filled.size(); iterator++) {
-		value = this->is_column_filled[iterator];
-		if(value != OCC_PLAYER_MIX) {
-			this->who_won = value;
-			return value;
-		}
-	}
-
-	for ( int iterator = 0; iterator<this->is_diagonal_filled.size(); iterator++) {
-		value = this->is_diagonal_filled[iterator];
-		if(value != OCC_PLAYER_MIX) {
-			this->who_won = value;
-			return value;
-		}
-	}
-
-	// for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) {
-	// 	if ( this->checkFilledRow(num_row) != UNOCCUPIED ) {
-			// if(  )
-	// 	}
-	// }
-
-	// for ( auto num_column = 0; num_column < BOARDSIZE; num_column++ ) {
-	// 	this->is_column_filled[num_column] = this->checkFilledColumn(num_column);
-	// }
-	// for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) {
-	// 	this->is_row_filled[num_row] = this->checkFilledRow(num_row);
-	// }
-
-	// for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) { 
-	// 	if( this->is_row_filled[num_row] == true) {
-	// 		int who_filled_row = this->checkFilledRow(num_row);
-	// 		if (who_filled_row == OCC_PLAYER_1) {
-	// 			return OCC_PLAYER_1;
-	// 		}
-	// 		if (who_filled_row == OCC_PLAYER_2) {
-	// 			return OCC_PLAYER_2;
-	// 		}
-
-	// 	}
-	// }
-	
-
-	// //assume 2-D grid
-	// for ( auto num_diagonal = 0; iterator < 2; iterator++ ) {
-
-	// }
-
-	// // if 
 	if( this->isBoardFilled() ) {
 		this->who_won = OCC_PLAYER_MIX; //no-one
 		return 1;
