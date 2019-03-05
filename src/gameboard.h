@@ -26,15 +26,19 @@ class GameBoard {
 	std::array<bool, BOARDSIZE> is_row_filled;
 	std::array<bool, BOARDSIZE> is_column_filled;
 	std::array<bool, 2> 		is_diagonal_filled; //assuming 2-D board
+	char 						colStart = 'A'; //zero-th column name
 
 public:
 	GameBoard();
 	void 	resetBoard();
-	int 	checkFilledRow();
-	int 	checkFilledColumn();
+	int 	checkFilledRow( int );
+	int 	checkFilledColumn( int );
 	int 	checkFilledDiagonal();
+	int 	checkFilledOffDiagonal();
 	int 	isGameOver();
 	int 	playMove(std::string userInput, int playerNumber);
+	int 	spin();
+	void	showBoard();
 };
 
 

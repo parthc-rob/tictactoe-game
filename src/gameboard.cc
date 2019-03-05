@@ -25,6 +25,21 @@ void GameBoard::resetBoard() {
 	this->current_board = _reset_board(this->current_board);
 }
 
+void GameBoard::showBoard() {
+	std::cout<<"Row/Col\t : ";
+	for ( int col=0; col<BOARDSIZE; col++) {
+		std::cout<<char(this->colStart + col)<<"\t";
+	}
+	std::cout<<std::endl;
+
+	for ( int row=0; row<BOARDSIZE; row++) {
+		std::cout<<row+1<<"\t: ";
+		for (int col=0; col<BOARDSIZE; col++) {
+			std::cout<<this->current_board.at(row*BOARDSIZE + col)<<"\t";
+		}
+		std::cout<<std::endl;
+	}
+}
 // implement checks for rows and columns
 
 int GameBoard::checkFilledRow( int num_row ) {
@@ -61,7 +76,7 @@ int GameBoard::checkFilledRow( int num_row ) {
 	// }
 }
 
-int GameBoard::checkFilledColumn() {
+int GameBoard::checkFilledColumn( int num_column ) {
 	int column_ownership = OCC_PLAYER_MIX;
 	for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) {
 		if ( this->player_1_board.at(num_column + num_row*BOARDSIZE) != UNOCCUPIED ) {
@@ -104,7 +119,7 @@ int GameBoard::isGameOver() {
 	// O(n^2) check, gives us which columns are filled / unfilled
 	for ( int num_row = 0; num_row < BOARDSIZE; num_row++) {
 		for ( int num_column = 0; num_column < BOARDSIZE; num_column++) {
-			if ( 
+			if (
 				this->player_1_board.at(num_column + num_row*BOARDSIZE) == UNOCCUPIED
 				|| this->player_2_board.at(num_column + num_row*BOARDSIZE) == UNOCCUPIED
 				) {
@@ -123,11 +138,11 @@ int GameBoard::isGameOver() {
 		}
 	}
 
-	for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) { 
-		if ( this->checkFilledRow(num_row) != UNOCCUPIED ) {
-			if(  )
-		}
-	}
+	// for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) {
+	// 	if ( this->checkFilledRow(num_row) != UNOCCUPIED ) {
+			// if(  )
+	// 	}
+	// }
 	for ( auto num_column = 0; num_column < BOARDSIZE; num_column++ ) { 
 		this->checkFilledColumn(num_column);
 	}
@@ -151,9 +166,35 @@ int GameBoard::isGameOver() {
 	// }
 
 	// // if 
-	// return 1;
+	return 1;
 }
 
+//input format : 1A , 2B, 3C row/column
 int GameBoard::playMove(std::string userInput, int playerNumber) {
+	int row = int(userInput.at(0))-49; //TODO introduce errorcheck
+	int col = int(userInput.at(1))-int(this->colStart);
+	if(row >=0 && row < BOARDSIZE &&
+		col >=0 && col < BOARDSIZE) {
+		if( playerNumber == 1) {
+			this->player_1_board.at(row*BOARDSIZE + col) = OCC_PLAYER_1;
+			this->current_board.at(row*BOARDSIZE + col)  = OCC_PLAYER_1;
+		}
+		else if( playerNumber == 2) {
+			this->player_2_board.at(row*BOARDSIZE + col) = OCC_PLAYER_2;
+			this->current_board.at(row*BOARDSIZE + col)  = OCC_PLAYER_2;
+		}
+		else {
+			std::cout<<"\n Invalid player Number! \n";
+			return 0;
+		}
+	}
+	else {
+		std::cout<<"\n Invalid cell number! Must be in format RowColumn [e.g. 1A, 2B, 3C ]\n";
+		return 0;
+	}
 	return 1;
+}
+
+int GameBoard::spin() {
+	return 0;
 }
