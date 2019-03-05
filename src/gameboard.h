@@ -28,6 +28,7 @@ class GameBoard {
 	int 								is_game_over;
 	std::array<int, 2*BOARDSIZE + 2> 	is_line_filled;
 	char 								colStart = 'A'; //zero-th column name
+	char 								no_one = ' ';
 
 public:
 	GameBoard();
@@ -41,7 +42,9 @@ public:
 	int 	playMove(std::string userInput, int playerNumber);
 	int 	spin();
 	void	showBoard();
-	int     whoWon();
+	char    whoWon();
+	char    playerSymbol(int playerNumber);
+	char 	noOne();
 };
 
 

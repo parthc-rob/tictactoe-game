@@ -24,7 +24,7 @@ void GameBoard::resetBoard() {
 }
 
 void GameBoard::showBoard() {
-	std::cout<<"Row/Col\t : ";
+	std::cout<<"Row/Col\t: ";
 	for ( int col=0; col<BOARDSIZE; col++) {
 		std::cout<<char(this->colStart + col)<<"\t";
 	}
@@ -33,12 +33,11 @@ void GameBoard::showBoard() {
 	for ( int row=0; row<BOARDSIZE; row++) {
 		std::cout<<row+1<<"\t: ";
 		for (int col=0; col<BOARDSIZE; col++) {
-			std::cout<<this->current_board.at(row*BOARDSIZE + col)<<"\t";
+			std::cout<<this->playerSymbol(this->current_board.at(row*BOARDSIZE + col))<<"\t";
 		}
 		std::cout<<std::endl;
 	}
 }
-// implement checks for rows and columns
 
 int GameBoard::checkFilledRow( int num_row ) {
 
@@ -188,10 +187,22 @@ int GameBoard::spin() {
 	return 0;
 }
 
-int GameBoard::whoWon() {
-	switch(this->who_won) {
-		case OCC_PLAYER_1: return 1; break;
-		case OCC_PLAYER_2: return 2;
+char GameBoard::whoWon() {
+	return playerSymbol(this->who_won);
+}
+
+char GameBoard::noOne() {
+	return this->no_one;
+}
+
+char GameBoard::playerSymbol(int playerNumber) {
+	if (playerNumber == OCC_PLAYER_1) {
+		return '0';
 	}
-	return OCC_PLAYER_MIX;
+	if (playerNumber == OCC_PLAYER_2) {
+		return 'X';
+	}
+	else {
+		return ' ';
+	}
 }
