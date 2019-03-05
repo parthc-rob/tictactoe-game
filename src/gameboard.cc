@@ -213,8 +213,18 @@ int GameBoard::isGameOver() {
 
 //input format : 1A , 2B, 3C row/column
 int GameBoard::playMove(std::string userInput, int playerNumber) {
-	int row = int(userInput.at(0))-49; //TODO introduce errorcheck
-	int col = int(userInput.at(1))-int(this->colStart);
+	int row,col;
+
+	row = int(userInput.at(0)) - int('1');
+	if ( (int)userInput.at(1) >= (int)'A' && (int)userInput.at(1) <= (int)'Z') {
+		col = int(userInput.at(1)) - int('A');
+	}
+	else if ( (int)userInput.at(1) >= 'a' && (int)userInput.at(1) <= (int)'z') {
+		col = int(userInput.at(1)) - int('a');
+	}
+	else {
+		col = -1;
+	}
 	if(row >=0 && row < BOARDSIZE &&
 		col >=0 && col < BOARDSIZE &&
 		this->current_board.at(row*BOARDSIZE + col) == UNOCCUPIED) {
@@ -248,5 +258,9 @@ int GameBoard::spin() {
 }
 
 int GameBoard::whoWon() {
-	return this->who_won;
+	switch(this->who_won) {
+		case OCC_PLAYER_1: return 1; break;
+		case OCC_PLAYER_2: return 2;
+	}
+	return OCC_PLAYER_MIX;
 }

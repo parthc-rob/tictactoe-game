@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 	while( is_game_active ) {
 		std::string current_move;
 		do { //DEBUG
-			std::cout<<"Enter a move, player "<<current_player<<": ";
+			std::cout<<"Enter a move, player "<<current_player<<" [e.g. 1A , 2B, 3C] : ";
 			std::cin>>current_move;
 			int isMoveValid = game_1.playMove(current_move,current_player);
 			if( isMoveValid ) {
