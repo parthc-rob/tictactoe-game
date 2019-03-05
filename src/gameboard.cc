@@ -89,9 +89,9 @@ int GameBoard::checkFilledColumn( int num_column ) {
 	return int(column_ownership/BOARDSIZE); // return 0 if no full ownership
 }
 
-int GameBoard::checkFilledDiagonal() {
+int GameBoard::checkLeftRightDiagonal() {
 	int diagonal_ownership = OCC_PLAYER_MIX;
-	for ( auto num_cell = 0; num_cell < BOARDSIZE; num_cell++ ) {
+	for ( int num_cell = 0; num_cell < BOARDSIZE; num_cell++ ) {
 		if ( this->player_1_board.at(num_cell + num_cell*BOARDSIZE) != UNOCCUPIED ) {
 			diagonal_ownership += OCC_PLAYER_1;
 		}
@@ -102,39 +102,72 @@ int GameBoard::checkFilledDiagonal() {
 	return int(diagonal_ownership/BOARDSIZE); // return 0 if no full ownership
 }
 
-int GameBoard::checkFilledOffDiagonal() {
+int GameBoard::checkRightLeftDiagonal() {
 	int off_diagonal_ownership = OCC_PLAYER_MIX;
-	for ( auto num_cell = 0; num_cell < BOARDSIZE; num_cell++ ) {
-		if ( this->player_1_board.at( num_cell - BOARDSIZE - 1 + num_cell*BOARDSIZE) != UNOCCUPIED ) {
+	for ( int num_cell = 0; num_cell < BOARDSIZE; num_cell++ ) {
+		if ( this->player_1_board.at(BOARDSIZE - 1 - num_cell + num_cell*BOARDSIZE) != UNOCCUPIED ) {
 			off_diagonal_ownership += OCC_PLAYER_1;
 		}
-		if ( this->player_2_board.at( num_cell - BOARDSIZE - 1 + num_cell*BOARDSIZE) != UNOCCUPIED ) {
+		if ( this->player_2_board.at(BOARDSIZE - 1 - num_cell + num_cell*BOARDSIZE) != UNOCCUPIED ) {
 			off_diagonal_ownership += OCC_PLAYER_2;
 		}
 	}
 	return int(off_diagonal_ownership/BOARDSIZE); // return 0 if no full ownership
 }
 
+bool GameBoard::isBoardFilled() {
+	for ( int num_row = 0; num_row < BOARDSIZE; num_row++) {
+		for ( int num_column = 0; num_column < BOARDSIZE; num_column++) {
+			if(current_board.at(num_row*BOARDSIZE + num_column) == UNOCCUPIED) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 int GameBoard::isGameOver() {
 	// O(n^2) check, gives us which columns are filled / unfilled
 	for ( int num_row = 0; num_row < BOARDSIZE; num_row++) {
 		for ( int num_column = 0; num_column < BOARDSIZE; num_column++) {
-			if (
+			if ( //TODO: WHY DO I NEED THIS IF CONDITION?
 				this->player_1_board.at(num_column + num_row*BOARDSIZE) == UNOCCUPIED
 				|| this->player_2_board.at(num_column + num_row*BOARDSIZE) == UNOCCUPIED
 				) {
-				this->is_row_filled[num_row] 		= false;
-				this->is_column_filled[num_column] 	= false;
+				this->is_row_filled[num_row] 		= this->checkFilledRow(num_row);
+				this->is_column_filled[num_column] 	= this->checkFilledColumn(num_column);
 
-				//diagonal check
 				if ( num_row == num_column ) {
-					this->is_diagonal_filled[0] = false;
+					this->is_diagonal_filled[0] = this->checkLeftRightDiagonal();
 				}
-				//off-diagonal check
 				else if ( num_row == BOARDSIZE - 1 - num_column ) {
-					this->is_diagonal_filled[1] = false;
+					this->is_diagonal_filled[1] = this->checkRightLeftDiagonal();
 				}
 			}
+		}
+	}
+	int value = 0;
+	for ( int iterator = 0; iterator<this->is_row_filled.size(); iterator++) {
+		value = this->is_row_filled[iterator];
+		if(value != OCC_PLAYER_MIX) {
+			this->who_won = value;
+			return value;
+		}
+	}
+
+	for ( int iterator = 0; iterator<this->is_column_filled.size(); iterator++) {
+		value = this->is_column_filled[iterator];
+		if(value != OCC_PLAYER_MIX) {
+			this->who_won = value;
+			return value;
+		}
+	}
+
+	for ( int iterator = 0; iterator<this->is_diagonal_filled.size(); iterator++) {
+		value = this->is_diagonal_filled[iterator];
+		if(value != OCC_PLAYER_MIX) {
+			this->who_won = value;
+			return value;
 		}
 	}
 
@@ -143,9 +176,14 @@ int GameBoard::isGameOver() {
 			// if(  )
 	// 	}
 	// }
-	for ( auto num_column = 0; num_column < BOARDSIZE; num_column++ ) { 
-		this->checkFilledColumn(num_column);
-	}
+
+	// for ( auto num_column = 0; num_column < BOARDSIZE; num_column++ ) {
+	// 	this->is_column_filled[num_column] = this->checkFilledColumn(num_column);
+	// }
+	// for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) {
+	// 	this->is_row_filled[num_row] = this->checkFilledRow(num_row);
+	// }
+
 	// for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) { 
 	// 	if( this->is_row_filled[num_row] == true) {
 	// 		int who_filled_row = this->checkFilledRow(num_row);
@@ -166,7 +204,11 @@ int GameBoard::isGameOver() {
 	// }
 
 	// // if 
-	return 1;
+	if( this->isBoardFilled() ) {
+		this->who_won = OCC_PLAYER_MIX; //no-one
+		return 1;
+	}
+	return GAME_NOT_OVER;
 }
 
 //input format : 1A , 2B, 3C row/column
@@ -174,7 +216,8 @@ int GameBoard::playMove(std::string userInput, int playerNumber) {
 	int row = int(userInput.at(0))-49; //TODO introduce errorcheck
 	int col = int(userInput.at(1))-int(this->colStart);
 	if(row >=0 && row < BOARDSIZE &&
-		col >=0 && col < BOARDSIZE) {
+		col >=0 && col < BOARDSIZE &&
+		this->current_board.at(row*BOARDSIZE + col) == UNOCCUPIED) {
 		if( playerNumber == 1) {
 			this->player_1_board.at(row*BOARDSIZE + col) = OCC_PLAYER_1;
 			this->current_board.at(row*BOARDSIZE + col)  = OCC_PLAYER_1;
@@ -189,7 +232,12 @@ int GameBoard::playMove(std::string userInput, int playerNumber) {
 		}
 	}
 	else {
-		std::cout<<"\n Invalid cell number! Must be in format RowColumn [e.g. 1A, 2B, 3C ]\n";
+		if (this->current_board.at(row*BOARDSIZE + col) != UNOCCUPIED) {
+			std::cout<<"\n Invalid cell number! Must be unoccupied!\n";
+		}
+		else {
+			std::cout<<"\n Invalid cell number! Must be in format RowColumn [e.g. 1A, 2B, 3C ]\n";
+		}
 		return 0;
 	}
 	return 1;
@@ -197,4 +245,8 @@ int GameBoard::playMove(std::string userInput, int playerNumber) {
 
 int GameBoard::spin() {
 	return 0;
+}
+
+int GameBoard::whoWon() {
+	return this->who_won;
 }
