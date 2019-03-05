@@ -3,8 +3,8 @@
 
 int main(int argc, char** argv) {
 
-	std::cout<< " \nTic - Tac - Toe Game Started \n Players : 0, X.\n"
-		<<"Player 0 starts\n\n";
+	std::cout<< " \nTic - Tac - Toe Game Started \n Players : 0, X\n"
+		<<"\nPlayer 0 starts\n\n";
 
 	GameBoard game_1;
 	game_1.showBoard();
@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 
 	while( is_game_active ) {
 		std::string current_move;
-		do { //DEBUG
+		do {
 			std::cout<<"Enter a move, player "<<game_1.playerSymbol(current_player)<<" [e.g. 1A , 2B, 3C] : ";
 			std::cin>>current_move;
 			int isMoveValid = game_1.playMove(current_move,current_player);
@@ -35,12 +35,6 @@ int main(int argc, char** argv) {
 				}
 				is_game_active = false;
 			}
-			// std::cout<<"Keep Playing? [y/n]";
-			// std::cin>>is_game_active_user_input;
-			// if(is_game_active_user_input == "n") {
-			// 	is_game_active = false;
-			// }
-
 		}while(is_game_active);
 	}
 	return 0;

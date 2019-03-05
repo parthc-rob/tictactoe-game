@@ -104,13 +104,12 @@ bool GameBoard::isBoardFilled() {
 }
 
 int GameBoard::isGameOver() {
-	// O(n^2) check, gives us which columns are filled / unfilled
 	for ( int num_row = 0; num_row < BOARDSIZE; num_row++) {
 		for ( int num_column = 0; num_column < BOARDSIZE; num_column++) {
-			if ( //TODO: WHY DO I NEED THIS IF CONDITION?
-				this->player_1_board.at(num_column + num_row*BOARDSIZE) == UNOCCUPIED
-				|| this->player_2_board.at(num_column + num_row*BOARDSIZE) == UNOCCUPIED
+			if (
+				this->current_board.at(num_column + num_row*BOARDSIZE) != UNOCCUPIED
 				) {
+				std::cout<<"\n cell check : "<<num_row<<num_column<<std::endl;
 				this->is_line_filled[num_row] =
 					this->checkFilledRow(num_row);
 
@@ -141,15 +140,14 @@ int GameBoard::isGameOver() {
 	return GAME_NOT_OVER;
 }
 
-//input format : 1A , 2B, 3C row/column
 int GameBoard::playMove(std::string userInput, int playerNumber) {
 	int row,col;
 
 	row = int(userInput.at(0)) - int('1');
-	if ( (int)userInput.at(1) >= (int)'A' && (int)userInput.at(1) <= (int)'Z') {
+	if ( (int)userInput.at(1) >= (int)'A' && (int)userInput.at(1) <= (int)'A'+BOARDSIZE-1) {
 		col = int(userInput.at(1)) - int('A');
 	}
-	else if ( (int)userInput.at(1) >= 'a' && (int)userInput.at(1) <= (int)'z') {
+	else if ( (int)userInput.at(1) >= 'a' && (int)userInput.at(1) <= (int)'a'+BOARDSIZE-1) {
 		col = int(userInput.at(1)) - int('a');
 	}
 	else {
