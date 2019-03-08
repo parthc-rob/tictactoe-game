@@ -4,19 +4,31 @@
 namespace ticTacUtils {
 	board_type _reset_board(board_type& current_board) {
 		for ( auto iterator = current_board.begin(); iterator < current_board.end() ; iterator++ ) {
-			current_board.at(*iterator) = UNOCCUPIED;
+			current_board.at(*iterator) = OCC_PLAYER_1;
 		}
 		return current_board;
 	}
 
 	int _random(int min, int max) {
 		std::srand(std::time(nullptr));
-		return min + (std::rand() % static_cast<int>(max - min + 1));
+		try {
+			return min + (std::rand() % static_cast<int>(max - min));
+		}
+		catch (std::exception &e) {
+			return -1;
+		}
 	}
 
-	template<typename T, typename F>
-	typename T::iterator& _get_random_from_list(T & list, const F & _random) {
-		return std::advance(list.begin(),_random(0,list.size()-1));
+	template<typename T>
+	typename T::iterator _get_random_from_list(T & list) {
+		typename T::iterator it = list.begin();
+		try {
+			std::advance(it,_random(0,list.size()-1));
+			return it;
+		}
+		catch (std::exception& e) {
+			return list.begin();
+		}
 	}
 
 	cell convertIndexToCell(int index, int board_size) {
@@ -29,20 +41,17 @@ namespace ticTacUtils {
 }
 
 ////////// Class Definitions
-GameBoard::GameBoard() { //initialize as blank
-	this->current_board = { UNOCCUPIED };
-	//TODO: find more elegant way to do this
+GameBoard::GameBoard(bool is_random_bot_active) {
+	//// TODO: find more elegant way to do this
 	this->current_board = ticTacUtils::_reset_board(this->current_board);
+	this->current_board = { UNOCCUPIED };
 	this->resetEmptyCells();
 
-	//defaults
+	//// defaults
 	this->who_won 				= OCC_PLAYER_MIX;
 	this->is_game_over 			= GAME_NOT_OVER;
 	this->is_line_filled		= { true };
-}
-GameBoard::GameBoard(bool is_random_bot_active) {
-	this->is_random_bot_active = is_random_bot_active;
-	this->GameBoard();
+	this->is_random_bot_active	= is_random_bot_active;
 }
 void GameBoard::resetBoard() {
 	this->current_board = ticTacUtils::_reset_board(this->current_board);
@@ -215,10 +224,11 @@ int GameBoard::playMove(cell inputCell, int playerNumber) {
 			std::cout<<"\n Invalid cell number! Must be unoccupied!\n";
 		}
 		else {
-			std::cout<<"\n Invalid cell number! Must be in format RowColumn [e.g. 1A, 2B, 3C ]\n";
+			std::cout<<"\n Invalid cell number! Must be in format RowColumn [e.g. 1A, 2b, 3C ]\n";
 		}
 		return 0;
 	}
+	int size = this->emptyCells.size();
 	this->emptyCells.remove(inputCell);
 	return 1;
 }
@@ -230,11 +240,12 @@ int GameBoard::playMove(std::string userInput, int playerNumber) {
 }
 
 int GameBoard::playRandomMove(int playerNumber) {
-	int cell_number = ticTacUtils::_random(0,BOARDSIZE-1);
-	cell rowCol;
-	rowCol[1] = cell_number % BOARDSIZE;
-	rowCol[0] = static_cast<int>(cell_number / BOARDSIZE);
-	return this->playMove(rowCol, playerNumber);
+	// int randomIndex = ticTacUtils::_random(0,this->emptyCells.size()-1c);
+
+	// cell rowCol;
+	// rowCol[1] = cell_number % BOARDSIZE;
+	// rowCol[0] = static_cast<int>(cell_number / BOARDSIZE);
+	return this->playMove(*ticTacUtils::_get_random_from_list(this->emptyCells), playerNumber);
 }
 
 int GameBoard::spin() {

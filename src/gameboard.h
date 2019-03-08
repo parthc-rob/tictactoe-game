@@ -16,12 +16,13 @@
 #include <ctime>
 #include <algorithm>
 #include <list>
+#include <iterator>
 
 //TODO: can use enum as well
 
 //initialize n*n gameboard upon input // generality
 typedef std::array <int, BOARDSIZE*BOARDSIZE> board_type;
-typedef std::array<int,2> cell;
+typedef std::array <int,2> cell;
 
 class GameBoard {
 
@@ -38,7 +39,7 @@ class GameBoard {
 	bool								is_random_bot_active = false;
 
 public:
-	GameBoard();
+	GameBoard(bool is_random_bot_active = false);
 	void 	resetBoard();
 	void	resetEmptyCells();
 	int 	checkFilledRow( int );

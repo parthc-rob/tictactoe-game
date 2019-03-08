@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 		is_player_2_bot = true;
 	}
 
-	GameBoard game_1(is_player_2_bot);
+	GameBoard game_1;
 	game_1.showBoard();
 
 	bool is_game_active = true;
