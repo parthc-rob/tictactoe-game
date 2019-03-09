@@ -80,7 +80,7 @@ public:
 	int 						playMove(std::string userInput,
 											bool is_player_0);
 	int							playRandomMove(bool is_player_0);
-	void						showBoard();
+	void						showBoard(bool visualize = false);
 	std::string					whoWon();
 	void						activateVisualization();
 };

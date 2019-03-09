@@ -66,8 +66,8 @@ void GameBoard::resetEmptyCells() {
 	}
 }
 
-void GameBoard::showBoard() {
-	if (!this->visualize) return;
+void GameBoard::showBoard(bool visualize) {
+	if (!this->visualize && !visualize) return;
 	std::cout<<"Row/Col\t: ";
 	for ( int col=0; col<BOARDSIZE; col++) {
 		std::cout<<char(this->colStart + col)<<"\t";
@@ -240,8 +240,4 @@ int GameBoard::playRandomMove(bool is_player_0) {
 
 std::string GameBoard::whoWon() {
 	return ticTacUtils::player_name[this->who_won];
-}
-
-void GameBoard::activateVisualization() {
-		this->visualize = true;
 }

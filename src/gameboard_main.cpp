@@ -65,7 +65,6 @@ int main(int argc, char** argv) {
 			}
 		}while(is_game_active);
 	}
-	game_1.activateVisualization();
-	game_1.showBoard();
+	game_1.showBoard(true);
 	return 0;
 }
