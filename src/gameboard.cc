@@ -67,7 +67,7 @@ void GameBoard::resetEmptyCells() {
 }
 
 void GameBoard::showBoard() {
-	if (!visualize) return;
+	if (!this->visualize) return;
 	std::cout<<"Row/Col\t: ";
 	for ( int col=0; col<BOARDSIZE; col++) {
 		std::cout<<char(this->colStart + col)<<"\t";

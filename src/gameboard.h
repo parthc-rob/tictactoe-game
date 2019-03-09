@@ -8,7 +8,7 @@
 #define GAME_OVER_1		1
 #define GAME_OVER_2	   -1
 #define GAME_NOT_OVER	0
-#define BOARDSIZE       3
+#define BOARDSIZE       6
 
 #include <array>
 #include <string>

@@ -27,19 +27,22 @@ int main(int argc, char** argv) {
 			std::cout<<"\nYou gave an invalid input, please try again.\n";
 		}
 	}
-	bool show_game_steps = false;
-	GameBoard game_1(show_game_steps);
-	game_1.showBoard();
 
 	bool is_game_active = true;
 	std::string is_game_active_user_input;
 	bool is_current_player_0 = true;
 
+	bool show_game_steps
+		= !(who_is_bot[is_current_player_0].second
+			&& who_is_bot[!is_current_player_0].second);
+	GameBoard game_1(show_game_steps);
+	game_1.showBoard();
+
 	while( is_game_active ) {
 		std::string current_move;
 		do {
 			int isMoveValid;
-			if (who_is_bot[static_cast<int>(is_current_player_0)].second) {
+			if (who_is_bot[!is_current_player_0].second) {
 				do {
 					isMoveValid = game_1.playRandomMove(is_current_player_0);
 				} while (!isMoveValid);
