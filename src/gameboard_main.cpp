@@ -33,7 +33,6 @@ int main(int argc, char** argv) {
 
 	bool is_game_active = true;
 	std::string is_game_active_user_input;
-	// int current_player = 1;
 	bool is_current_player_0 = true;
 
 	while( is_game_active ) {

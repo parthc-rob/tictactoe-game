@@ -52,7 +52,6 @@ namespace ticTacUtils {
 
 class GameBoard {
 
-	// std::array <int, BOARDSIZE*BOARDSIZE> current_board;
 	ticTacUtils::board_type_t 			current_board;
 	ticTacUtils::board_type_t			player_0_board;
 	ticTacUtils::board_type_t			player_X_board;
@@ -83,10 +82,6 @@ public:
 	int							playRandomMove(bool is_player_0);
 	void						showBoard();
 	std::string					whoWon();
-	char    					playerSymbol(bool is_player_0);
-	char 						noOne();
 };
-
-
 
 #endif

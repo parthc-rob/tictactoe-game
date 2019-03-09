@@ -238,18 +238,3 @@ int GameBoard::playRandomMove(bool is_player_0) {
 std::string GameBoard::whoWon() {
 	return ticTacUtils::player_name[this->who_won];
 }
-
-char GameBoard::noOne() {
-	return this->no_one;
-}
-
-char GameBoard::playerSymbol(bool is_player_0) {
-	if (is_player_0) {
-		return '0';
-	}
-	return 'X';
-	// }
-	// else {
-	// 	return ' ';
-	// }
-}
