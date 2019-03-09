@@ -1,5 +1,5 @@
 #include <iostream>
-#include "gameboard.cc"
+#include "../include/gameboard.cc"
 
 int main(int argc, char** argv) {
 

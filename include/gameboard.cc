@@ -10,12 +10,10 @@ ticTacUtils::board_type_t ticTacUtils::reset_board(ticTacUtils::board_type_t& cu
 
 int ticTacUtils::random(int min, int max) {
 	std::srand(std::time(nullptr));
-	try {
+	if (max-min > 0) {
 		return min + (std::rand() % static_cast<int>(max - min));
 	}
-	catch (std::exception &e) {
-		return -1;
-	}
+	return min;
 }
 
 template<typename T> typename T::iterator ticTacUtils::get_random_from_list(T & list) {
@@ -235,7 +233,9 @@ int GameBoard::playRandomMove(bool is_player_0) {
 	// cell rowCol;
 	// rowCol[1] = cell_number % BOARDSIZE;
 	// rowCol[0] = static_cast<int>(cell_number / BOARDSIZE);
-	return this->playMove(*ticTacUtils::get_random_from_list(this->emptyCells), is_player_0);
+	auto random_move = *ticTacUtils::get_random_from_list(this->emptyCells);
+	this->emptyCells.remove(random_move);
+	return this->playMove(random_move, is_player_0);
 }
 
 std::string GameBoard::whoWon() {
