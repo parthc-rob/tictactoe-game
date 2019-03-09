@@ -62,10 +62,10 @@ class GameBoard {
 	char 								colStart = 'A';
 	char 								no_one = ' ';
 	std::list<ticTacUtils::cell_t>		emptyCells;
-	bool								is_random_bot_active = false;
+	bool								visualize = true;
 
 public:
-	GameBoard();
+	GameBoard(bool visualize = true);
 	void 						resetBoard();
 	void						resetEmptyCells();
 	ticTacUtils::player_enum 	checkFilledRow( int );
@@ -82,6 +82,7 @@ public:
 	int							playRandomMove(bool is_player_0);
 	void						showBoard();
 	std::string					whoWon();
+	void						activateVisualization();
 };
 
 #endif

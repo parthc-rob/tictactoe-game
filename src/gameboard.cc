@@ -41,16 +41,17 @@ int ticTacUtils::convertRowColToIndex(int row, int column, int board_size) {
 }
 
 ////////// Class Definitions
-GameBoard::GameBoard() {
+GameBoard::GameBoard(bool visualize){
 	//// TODO: find more elegant way to do this
 	this->current_board = ticTacUtils::reset_board(this->current_board);
 	this->current_board = { ticTacUtils::NONE };
 	this->resetEmptyCells();
 
-	//// defaults
+	//// default initialization
 	this->who_won 				= ticTacUtils::NONE;
 	this->is_game_over 			= GAME_NOT_OVER;
 	this->line_occupancy		= { ticTacUtils::NONE };
+	this->visualize				= visualize;
 }
 void GameBoard::resetBoard() {
 	this->current_board = ticTacUtils::reset_board(this->current_board);
@@ -59,13 +60,14 @@ void GameBoard::resetBoard() {
 void GameBoard::resetEmptyCells() {
 	this->emptyCells.clear();
 	ticTacUtils::cell_t current_cell;
-	for (int i = 0; i<BOARDSIZE; i++) {
+	for (int i = 0; i<BOARDSIZE*BOARDSIZE; i++) {
 		current_cell = ticTacUtils::convertIndexToCell(i, BOARDSIZE);
 		this->emptyCells.push_back(current_cell);
 	}
 }
 
 void GameBoard::showBoard() {
+	if (!visualize) return;
 	std::cout<<"Row/Col\t: ";
 	for ( int col=0; col<BOARDSIZE; col++) {
 		std::cout<<char(this->colStart + col)<<"\t";
@@ -207,6 +209,7 @@ int GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
 		}
 	}
 	else {
+		if (!visualize) return 0;
 		if (this->current_board.at(row*BOARDSIZE + col) != ticTacUtils::NONE) {
 			std::cout<<"\n Invalid cell number! Must be unoccupied!\n";
 		}
@@ -237,4 +240,8 @@ int GameBoard::playRandomMove(bool is_player_0) {
 
 std::string GameBoard::whoWon() {
 	return ticTacUtils::player_name[this->who_won];
+}
+
+void GameBoard::activateVisualization() {
+		this->visualize = true;
 }

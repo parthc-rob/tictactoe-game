@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
 			std::cout<<"\nYou gave an invalid input, please try again.\n";
 		}
 	}
-
-	GameBoard game_1;
+	bool show_game_steps = false;
+	GameBoard game_1(show_game_steps);
 	game_1.showBoard();
 
 	bool is_game_active = true;
@@ -62,5 +62,7 @@ int main(int argc, char** argv) {
 			}
 		}while(is_game_active);
 	}
+	game_1.activateVisualization();
+	game_1.showBoard();
 	return 0;
 }
