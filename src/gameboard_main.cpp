@@ -5,15 +5,27 @@ int main(int argc, char** argv) {
 
 	std::cout<< " \nTic - Tac - Toe Game Started \n Players : 0, X\n"
 		<<"\nPlayer 0 starts\n\n";
-	bool is_player_2_bot=false;
-	int mode;
-	do{
-		std::cout<<"\nChoose mode [1,2]:\n1\t: Player-vs-Player\n2\t: Player-vs-random bot\n";
-		std::cin>>mode;
-	}while(mode>2 || mode <1);
 
-	if(mode == 2) {
-		is_player_2_bot = true;
+	std::array<ticTacUtils::player_enum,2> game_players
+			= { ticTacUtils::PLAYER_0, ticTacUtils::PLAYER_X };
+
+	std::vector<std::pair<ticTacUtils::player_enum,bool>> who_is_bot;
+
+	auto player_iterator = game_players.begin();
+
+	while(player_iterator < game_players.end()) {
+		int keyInput;
+		std::cout<<"\nChoose Player "<<ticTacUtils::player_symbol[*player_iterator];
+		std::cout<<" :\n0\t: Human\n1\t: Random bot\n";
+
+		std::cin>>keyInput;
+		if (keyInput == 0 || keyInput == 1) {
+			who_is_bot.push_back(std::make_pair(*player_iterator,(bool)keyInput));
+			player_iterator++;
+		}
+		else {
+			std::cout<<"\nYou gave an invalid input, please try again.\n";
+		}
 	}
 
 	GameBoard game_1;
@@ -21,34 +33,32 @@ int main(int argc, char** argv) {
 
 	bool is_game_active = true;
 	std::string is_game_active_user_input;
-	int current_player = 1;
+	// int current_player = 1;
+	bool is_current_player_0 = true;
 
 	while( is_game_active ) {
 		std::string current_move;
 		do {
 			int isMoveValid;
-			if ( is_player_2_bot && current_player != 1) {
-				isMoveValid = game_1.playRandomMove(current_player);
+			if (who_is_bot[static_cast<int>(is_current_player_0)].second) {
+				do {
+					isMoveValid = game_1.playRandomMove(is_current_player_0);
+				} while (!isMoveValid);
 			}
 			else {
-				std::cout<<"Enter a move, player "<<game_1.playerSymbol(current_player)<<" [e.g. 1A , 2B, 3C] : ";
-				std::cin>>current_move;
-				isMoveValid = game_1.playMove(current_move,current_player);
+				do {
+					std::cout<<"Enter a move, "
+						<<ticTacUtils::player_name[game_players[(int)!is_current_player_0]]
+						<<" [e.g. 1A , 2B, 3C] : ";
+					std::cin>>current_move;
+					isMoveValid = game_1.playMove(current_move,is_current_player_0);
+				} while (!isMoveValid);
 			}
-			if( isMoveValid ) {
-				current_player = (current_player)%2 + 1;
-				game_1.showBoard();
-			}
-
+			is_current_player_0 = !is_current_player_0;
+			game_1.showBoard();
 			if ( game_1.isGameOver() ) {
 
-				std::cout<<"\nGame Over. Winning Player : ";
-				if( game_1.whoWon() == game_1.noOne() ) {
-					std::cout<< " No One \n";
-				}
-				else {
-					std::cout<<game_1.whoWon()<<"\n";
-				}
+				std::cout<<"\nGame Over. Winning Player : "<<game_1.whoWon()<<std::endl;
 				is_game_active = false;
 			}
 		}while(is_game_active);
