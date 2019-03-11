@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 
 		auto player_iterator = game_players.begin();
 
-		while(player_iterator < game_players.end()) {
+		while(player_iterator != game_players.end()) {
 			int keyInput;
 			std::cout<<"\nChoose Player "<<ticTacUtils::player_symbol[*player_iterator];
 			std::cout<<" :\n0\t: Human\n1\t: Random bot\n";
@@ -31,10 +31,9 @@ int main(int argc, char** argv) {
 		}
 
 		bool is_game_active = true;
-		std::string is_game_active_user_input;
 		bool is_current_player_0 = true;
 
-		bool show_game_steps
+		bool show_game_steps // automatically false if bot vs bot game
 			= !(who_is_bot[is_current_player_0].second
 				&& who_is_bot[!is_current_player_0].second);
 		GameBoard current_game(show_game_steps, board_size);
