@@ -59,15 +59,20 @@ void ticTacUtils::printRowSeparator(int board_size) {
 	}
 	std::cout<<std::endl;
 }
+bool ticTacUtils::promptReplay() {
+	std::string keyIn;
+	std::cout<<"\n========\nPlay Again? [y/n]: ";
+	std::cin>>keyIn;
+	if(keyIn[0] == 'y' || keyIn[0] == 'Y') {
+		return true;
+	}
+	return false;
+}
 
 ////////// Class Definitions
 GameBoard::GameBoard(bool visualize){
-	//// TODO: find more elegant way to do this
-	this->current_board = ticTacUtils::reset_board(this->current_board);
 	this->current_board = { ticTacUtils::NONE };
 	this->resetEmptyCells();
-
-	//// default initialization
 	this->who_won 				= ticTacUtils::NONE;
 	this->is_game_over 			= GAME_NOT_OVER;
 	this->line_occupancy		= { ticTacUtils::NONE };
@@ -106,49 +111,49 @@ void GameBoard::showBoard(bool visualize) {
 	}
 }
 
-ticTacUtils::player_enum GameBoard::checkFilledRow( int num_row ) {
-
-	int row_ownership = (int)ticTacUtils::NONE;
-	for ( auto num_column = 0; num_column < BOARDSIZE; num_column++ ) {
-		row_ownership += (int)this->current_board.at(
-			ticTacUtils::convertRowColToIndex(num_row,num_column,BOARDSIZE)
+ticTacUtils::player_enum GameBoard::checkFilledLine(
+	ticTacUtils::line_type line
+	) {
+	int line_ownership = (int)ticTacUtils::NONE; ticTacUtils::cell_t rowCol;
+	for ( auto iterator = 0; iterator < BOARDSIZE; iterator++ ) {
+		switch (line) {
+			case ticTacUtils::LR_DIAGONAL: {
+				rowCol = {iterator, iterator}; break;
+			}
+			case ticTacUtils::RL_DIAGONAL: {
+				rowCol = {BOARDSIZE - 1 - iterator, iterator}; break;
+			}
+			default:
+				return ticTacUtils::NONE;
+		}
+		line_ownership += (int)this->current_board.at(
+			ticTacUtils::convertCellToIndex(rowCol,BOARDSIZE)
 			);
 	}
-	return (ticTacUtils::player_enum)static_cast<int>(row_ownership/BOARDSIZE);
+	return (ticTacUtils::player_enum)static_cast<int>(line_ownership/BOARDSIZE);
 }
 
-ticTacUtils::player_enum GameBoard::checkFilledColumn( int num_column ) {
-	int column_ownership = (int)ticTacUtils::NONE;
-	for ( auto num_row = 0; num_row < BOARDSIZE; num_row++ ) {
-		column_ownership += this->current_board.at(
-			ticTacUtils::convertRowColToIndex(num_row,num_column,BOARDSIZE)
-			);
+ticTacUtils::player_enum GameBoard::checkFilledLine(
+	ticTacUtils::line_type line, ticTacUtils::cell_t rowCol
+	) {
+	int line_ownership = (int)ticTacUtils::NONE; int iterator = 0;
+	for ( auto iterator = 0; iterator < BOARDSIZE; iterator++ ) {
+		switch (line) {
+			case ticTacUtils::ROW: {
+				line_ownership += (int)this->current_board.at(
+					ticTacUtils::convertRowColToIndex(rowCol[0],iterator,BOARDSIZE)
+					); break;
+			}
+			case ticTacUtils::COLUMN: {
+				line_ownership += (int)this->current_board.at(
+					ticTacUtils::convertRowColToIndex(iterator,rowCol[1],BOARDSIZE)
+					); break;
+			}
+			default:
+				return ticTacUtils::NONE;
+		}
 	}
-	return (ticTacUtils::player_enum)static_cast<int>(column_ownership/BOARDSIZE);
-}
-
-ticTacUtils::player_enum GameBoard::checkLeftRightDiagonal() {
-	int diagonal_ownership = ticTacUtils::NONE;
-	for ( int num_cell = 0; num_cell < BOARDSIZE; num_cell++ ) {
-		diagonal_ownership += this->current_board.at(
-			ticTacUtils::convertRowColToIndex(num_cell, num_cell, BOARDSIZE)
-			);
-	}
-	return (ticTacUtils::player_enum)
-		static_cast<int>(diagonal_ownership/BOARDSIZE);
-}
-
-ticTacUtils::player_enum GameBoard::checkRightLeftDiagonal() {
-	int off_diagonal_ownership = ticTacUtils::NONE;
-	for ( int num_cell = 0; num_cell < BOARDSIZE; num_cell++ ) {
-		off_diagonal_ownership += this->current_board.at(
-			ticTacUtils::convertRowColToIndex(
-				BOARDSIZE - 1 - num_cell, num_cell, BOARDSIZE
-				)
-			);
-	}
-	return (ticTacUtils::player_enum)
-		static_cast<int>(off_diagonal_ownership/BOARDSIZE);
+	return (ticTacUtils::player_enum)static_cast<int>(line_ownership/BOARDSIZE);
 }
 
 bool GameBoard::isBoardFilled() {
@@ -165,26 +170,27 @@ bool GameBoard::isBoardFilled() {
 }
 
 int GameBoard::isGameOver() {
-	for ( int num_row = 0; num_row < BOARDSIZE; num_row++) {
-		for ( int num_column = 0; num_column < BOARDSIZE; num_column++) {
+	ticTacUtils::cell_t rowCol = {0,0};
+	for (; rowCol[0] < BOARDSIZE; rowCol[0]++) {
+		for (; rowCol[1] < BOARDSIZE; rowCol[1]++) {
 			if (
 				this->current_board.at(
-					ticTacUtils::convertRowColToIndex(num_row,num_column,BOARDSIZE)
+					ticTacUtils::convertCellToIndex(rowCol,BOARDSIZE)
 					) != ticTacUtils::NONE
 				) {
-				this->line_occupancy[num_row] =
-					this->checkFilledRow(num_row);
+				this->line_occupancy[ticTacUtils::ROW + rowCol[0]] =
+					this->checkFilledLine(ticTacUtils::ROW,rowCol);
 
-				this->line_occupancy[BOARDSIZE + num_column] =
-					this->checkFilledColumn(num_column);
+				this->line_occupancy[ticTacUtils::COLUMN + rowCol[1]] =
+					this->checkFilledLine(ticTacUtils::COLUMN,rowCol);
 			}
 		}
 	}
-	this->line_occupancy[2*BOARDSIZE] =
-		this->checkLeftRightDiagonal();
+	this->line_occupancy[ticTacUtils::LR_DIAGONAL] =
+		this->checkFilledLine(ticTacUtils::LR_DIAGONAL);
 
-	this->line_occupancy[2*BOARDSIZE + 1] =
-		this->checkRightLeftDiagonal();
+	this->line_occupancy[ticTacUtils::RL_DIAGONAL] =
+		this->checkFilledLine(ticTacUtils::RL_DIAGONAL);
 
 	int value = 0;
 	for ( int iterator = 0; iterator < this->line_occupancy.size(); iterator++ ) {

@@ -23,6 +23,11 @@
 namespace ticTacUtils {
 	enum 	bot_enum{ HUMAN = 0, BOT = 1 };
 	enum 	player_enum{ NONE = 0, PLAYER_0 = 1, PLAYER_X = -1};
+	enum 	line_type{
+		ROW = 0, COLUMN = BOARDSIZE,
+		LR_DIAGONAL = 2*BOARDSIZE,
+		RL_DIAGONAL = 2*BOARDSIZE + 1
+		};
 	std::map<ticTacUtils::player_enum, std::string>
 			player_name
 			= {
@@ -49,6 +54,7 @@ namespace ticTacUtils {
 	int 			convertCellToIndex(cell_t rowCol, int board_size);
 	int 			convertRowColToIndex(int row, int column, int board_size);
 	void			printRowSeparator(int board_size);
+	bool			promptReplay();
 }
 
 class GameBoard {
@@ -69,10 +75,9 @@ public:
 	GameBoard(bool visualize = true);
 	void 						resetBoard();
 	void						resetEmptyCells();
-	ticTacUtils::player_enum 	checkFilledRow( int );
-	ticTacUtils::player_enum 	checkFilledColumn( int );
-	ticTacUtils::player_enum 	checkLeftRightDiagonal();
-	ticTacUtils::player_enum 	checkRightLeftDiagonal();
+	ticTacUtils::player_enum 	checkFilledLine(ticTacUtils::line_type line);
+	ticTacUtils::player_enum 	checkFilledLine(ticTacUtils::line_type line,
+											ticTacUtils::cell_t rowCol);
 	bool						isBoardFilled();
 	int 						isGameOver();
 	ticTacUtils::cell_t			processKeyboardInput(std::string userInput);
