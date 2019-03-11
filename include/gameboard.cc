@@ -223,7 +223,6 @@ int GameBoard::isGameOver() {
 	return GAME_NOT_OVER;
 }
 
-
 ticTacUtils::cell_t GameBoard::processKeyboardInput(std::string userInput) {
 	ticTacUtils::cell_t rowCol;
 	if (int(userInput.at(0)) < int('1') + this->board_size) {
@@ -283,7 +282,6 @@ bool GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
 	this->emptyCells.remove(inputCell);
 	return true;
 }
-
 
 bool GameBoard::playMove(std::string userInput, bool is_player_0) {
 	auto rowCol = this->processKeyboardInput(userInput);

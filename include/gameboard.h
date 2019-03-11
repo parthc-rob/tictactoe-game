@@ -13,9 +13,6 @@
 #include <map>
 #include <vector>
 
-// enum class bot_enum{
-// 	 human = 0, bot = 1
-// 	};
 enum class player_enum{
 	 none = 0, player_0 = 1, player_x = -1
 	};
