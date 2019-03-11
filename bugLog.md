@@ -1,4 +1,4 @@
-1. floating point exception, min-max handling for last emptyCell
+1. ~~floating point exception, min-max handling for last emptyCell~~
 
 2. mention default boardsize in README
 
@@ -8,7 +8,7 @@
 
 5.~~showBoard - make a grid with boundaries~~
 
-6. Human vs Human terminate condition isBoardFilled failing
+6. ~~Terminate condition isBoardFilled failing~~
 
 7. ~~Fix keyboardInput error handling, currently works on '1a' '2z' '9x' etc, crashes if string length !=2~~
 

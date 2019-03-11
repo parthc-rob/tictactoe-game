@@ -229,10 +229,8 @@ ticTacUtils::cell_t GameBoard::processKeyboardInput(std::string userInput) {
 }
 
 int GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
-	int row = inputCell[0], col = inputCell[1];
-
-	if(row <0 || row >= BOARDSIZE ||
-		col <0 || col >= BOARDSIZE) {
+	if( inputCell[0] <0 || inputCell[0] >= BOARDSIZE ||
+		inputCell[1] <0 || inputCell[1] >= BOARDSIZE) {
 		std::cout<<"\n Invalid cell number!"
 			<<" Must be in format RowColumn [e.g. 1A, 2b, 3C ]\n";
 		return 0;
@@ -240,7 +238,7 @@ int GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
 	else {
 		if (
 			this->current_board.at(
-				ticTacUtils::convertRowColToIndex(row,col,BOARDSIZE)
+				ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
 				) != ticTacUtils::NONE
 			) {
 			std::cout<<"\n Invalid cell number! Must be unoccupied!\n";
@@ -249,18 +247,18 @@ int GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
 		else {
 			if( is_player_0) {
 				this->player_0_board.at(
-					ticTacUtils::convertRowColToIndex(row,col,BOARDSIZE)
+					ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
 					) = ticTacUtils::PLAYER_0;
 				this->current_board.at(
-					ticTacUtils::convertRowColToIndex(row,col,BOARDSIZE)
+					ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
 					)  = ticTacUtils::PLAYER_0;
 			}
 			else {
 				this->player_X_board.at(
-					ticTacUtils::convertRowColToIndex(row,col,BOARDSIZE)
+					ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
 					) = ticTacUtils::PLAYER_X;
 				this->current_board.at(
-					ticTacUtils::convertRowColToIndex(row,col,BOARDSIZE)
+					ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
 					)  = ticTacUtils::PLAYER_X;
 			}
 		}
@@ -277,6 +275,9 @@ int GameBoard::playMove(std::string userInput, bool is_player_0) {
 }
 
 int GameBoard::playRandomMove(bool is_player_0) {
+	if (this->emptyCells.size() == 0) {
+		return 0;
+	}
 	auto random_move = *ticTacUtils::get_random_from_list(this->emptyCells);
 	this->emptyCells.remove(random_move);
 	return this->playMove(random_move, is_player_0);

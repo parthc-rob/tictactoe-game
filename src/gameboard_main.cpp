@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
 			}
 			is_current_player_0 = !is_current_player_0;
 			game_1.showBoard();
-			if ( game_1.isGameOver() ) {
+			if ( game_1.isGameOver() != GAME_NOT_OVER) {
 
 				std::cout<<"\n===========\n GAME OVER.\n Winning Player : "
 					<<game_1.whoWon()<<"\n===========\n";

@@ -7,7 +7,7 @@
 #define UNOCCUPIED      0
 #define GAME_OVER_1		1
 #define GAME_OVER_2	   -1
-#define GAME_NOT_OVER	0
+#define GAME_NOT_OVER	999
 #define BOARDSIZE       3
 
 #include <array>
