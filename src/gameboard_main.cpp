@@ -60,7 +60,8 @@ int main(int argc, char** argv) {
 			game_1.showBoard();
 			if ( game_1.isGameOver() ) {
 
-				std::cout<<"\nGame Over. Winning Player : "<<game_1.whoWon()<<std::endl;
+				std::cout<<"\n===========\n GAME OVER.\n Winning Player : "
+					<<game_1.whoWon()<<"\n===========\n";
 				is_game_active = false;
 			}
 		}while(is_game_active);

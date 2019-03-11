@@ -37,6 +37,13 @@ int ticTacUtils::convertCellToIndex(ticTacUtils::cell_t rowCol, int board_size) 
 int ticTacUtils::convertRowColToIndex(int row, int column, int board_size) {
 	return row*board_size + column;
 }
+void ticTacUtils::printRowSeparator(int board_size) {
+	std::cout<<"\n--------+";
+	for ( int col=0; col<board_size; col++) {
+		std::cout<<"---+";
+	}
+	std::cout<<std::endl;
+}
 
 ////////// Class Definitions
 GameBoard::GameBoard(bool visualize){
@@ -66,20 +73,19 @@ void GameBoard::resetEmptyCells() {
 
 void GameBoard::showBoard(bool visualize) {
 	if (!this->visualize && !visualize) return;
-	std::cout<<"Row/Col\t: ";
+	std::cout<<"Row/Col\t| ";
 	for ( int col=0; col<BOARDSIZE; col++) {
-		std::cout<<char(this->colStart + col)<<"\t";
+		std::cout<<char(this->colStart + col)<<" | ";
 	}
-	std::cout<<std::endl;
-
+	ticTacUtils::printRowSeparator(BOARDSIZE);
 	for ( int row=0; row<BOARDSIZE; row++) {
-		std::cout<<row+1<<"\t: ";
+		std::cout<<row+1<<"\t| ";
 		for (int col=0; col<BOARDSIZE; col++) {
 			auto current_cell =
 				this->current_board.at(ticTacUtils::convertRowColToIndex(row,col,BOARDSIZE));
-			std::cout<<ticTacUtils::player_symbol[current_cell]<<"\t";
+			std::cout<<ticTacUtils::player_symbol[current_cell]<<" | ";
 		}
-		std::cout<<std::endl;
+		ticTacUtils::printRowSeparator(BOARDSIZE);
 	}
 }
 
@@ -228,11 +234,6 @@ int GameBoard::playMove(std::string userInput, bool is_player_0) {
 }
 
 int GameBoard::playRandomMove(bool is_player_0) {
-	// int randomIndex = ticTacUtils::_random(0,this->emptyCells.size()-1c);
-
-	// cell rowCol;
-	// rowCol[1] = cell_number % BOARDSIZE;
-	// rowCol[0] = static_cast<int>(cell_number / BOARDSIZE);
 	auto random_move = *ticTacUtils::get_random_from_list(this->emptyCells);
 	this->emptyCells.remove(random_move);
 	return this->playMove(random_move, is_player_0);
