@@ -4,7 +4,7 @@
 
 3. ~~mention Ctrl+C exit method in README~~
 
-4. try to make board_type_t resizable vector [write subroutines to return by index,by value]
+4. ~~try to make board_type_t resizable vector [write subroutines to return by index,by value]~~
 
 5.~~showBoard - make a grid with boundaries~~
 

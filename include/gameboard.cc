@@ -1,15 +1,23 @@
 #include "gameboard.h"
 
 ////////// Utilities
-ticTacUtils::board_type_t ticTacUtils::reset_board(
-	ticTacUtils::board_type_t& current_board
+void ticTacUtils::reset_board(
+	ticTacUtils::board_type_t &current_board,
+	ticTacUtils::line_list_t &line_occupancy,
+	int size
 	) {
+	current_board.clear(); current_board.resize(size*size);
+	line_occupancy.clear(); line_occupancy.resize(2*size+2);
 	for ( auto iterator = current_board.begin();
-		iterator < current_board.end();
+		iterator != current_board.end();
 		iterator++ ) {
-		current_board.at(*iterator) = ticTacUtils::NONE;
+		*iterator = player_enum::none;
 	}
-	return current_board;
+	for ( auto iterator = line_occupancy.begin();
+		iterator != line_occupancy.end();
+		iterator++ ) {
+		*iterator = player_enum::none;
+	}
 }
 
 int ticTacUtils::random(int min, int max) {
@@ -68,25 +76,33 @@ bool ticTacUtils::promptReplay() {
 	}
 	return false;
 }
+int	ticTacUtils::promptBoardSize() {
+	std::string keyIn; int board_size;
+	while(true) {
+		std::cout<<"\n========\n Specify size of board : [2-9]: ";
+		std::cin>>keyIn;
+		if(keyIn[0] > '1' && keyIn[0] <= '9') {
+			return (int)keyIn[0] - (int)'1' + 1;
+		}
+	}
+}
 
 ////////// Class Definitions
-GameBoard::GameBoard(bool visualize){
-	this->current_board = { ticTacUtils::NONE };
+GameBoard::GameBoard(bool vis, int size) : board_size(size),visualize(vis) {
+	ticTacUtils::reset_board(this->current_board,this->line_occupancy,this->board_size);
 	this->resetEmptyCells();
-	this->who_won 				= ticTacUtils::NONE;
+	this->who_won 				= player_enum::none;
 	this->is_game_over 			= GAME_NOT_OVER;
-	this->line_occupancy		= { ticTacUtils::NONE };
-	this->visualize				= visualize;
 }
 void GameBoard::resetBoard() {
-	this->current_board = ticTacUtils::reset_board(this->current_board);
+	ticTacUtils::reset_board(this->current_board,line_occupancy,this->board_size);
 	this->resetEmptyCells();
 }
 void GameBoard::resetEmptyCells() {
 	this->emptyCells.clear();
 	ticTacUtils::cell_t current_cell;
-	for (int i = 0; i<BOARDSIZE*BOARDSIZE; i++) {
-		current_cell = ticTacUtils::convertIndexToCell(i, BOARDSIZE);
+	for (int i = 0; i<this->board_size*this->board_size; i++) {
+		current_cell = ticTacUtils::convertIndexToCell(i, this->board_size);
 		this->emptyCells.push_back(current_cell);
 	}
 }
@@ -94,74 +110,74 @@ void GameBoard::resetEmptyCells() {
 void GameBoard::showBoard(bool visualize) {
 	if (!this->visualize && !visualize) return;
 	std::cout<<"Row/Col\t| ";
-	for ( int col=0; col<BOARDSIZE; col++) {
+	for ( int col=0; col<this->board_size; col++) {
 		std::cout<<char(this->colStart + col)<<" | ";
 	}
-	ticTacUtils::printRowSeparator(BOARDSIZE);
-	for ( int row=0; row<BOARDSIZE; row++) {
+	ticTacUtils::printRowSeparator(this->board_size);
+	for ( int row=0; row<this->board_size; row++) {
 		std::cout<<row+1<<"\t| ";
-		for (int col=0; col<BOARDSIZE; col++) {
+		for (int col=0; col<this->board_size; col++) {
 			auto current_cell =
 				this->current_board.at(
-					ticTacUtils::convertRowColToIndex(row,col,BOARDSIZE)
+					ticTacUtils::convertRowColToIndex(row,col,this->board_size)
 					);
 			std::cout<<ticTacUtils::player_symbol[current_cell]<<" | ";
 		}
-		ticTacUtils::printRowSeparator(BOARDSIZE);
+		ticTacUtils::printRowSeparator(this->board_size);
 	}
 }
 
-ticTacUtils::player_enum GameBoard::checkFilledLine(
-	ticTacUtils::line_type line
+player_enum GameBoard::checkFilledLine(
+	line_type line
 	) {
-	int line_ownership = (int)ticTacUtils::NONE; ticTacUtils::cell_t rowCol;
-	for ( auto iterator = 0; iterator < BOARDSIZE; iterator++ ) {
+	int line_ownership = (int)player_enum::none; ticTacUtils::cell_t rowCol;
+	for ( auto iterator = 0; iterator < this->board_size; iterator++ ) {
 		switch (line) {
-			case ticTacUtils::LR_DIAGONAL: {
+			case line_type::lr_diagonal: {
 				rowCol = {iterator, iterator}; break;
 			}
-			case ticTacUtils::RL_DIAGONAL: {
-				rowCol = {BOARDSIZE - 1 - iterator, iterator}; break;
+			case line_type::rl_diagonal: {
+				rowCol = {this->board_size - 1 - iterator, iterator}; break;
 			}
 			default:
-				return ticTacUtils::NONE;
+				return player_enum::none;
 		}
 		line_ownership += (int)this->current_board.at(
-			ticTacUtils::convertCellToIndex(rowCol,BOARDSIZE)
+			ticTacUtils::convertCellToIndex(rowCol,this->board_size)
 			);
 	}
-	return (ticTacUtils::player_enum)static_cast<int>(line_ownership/BOARDSIZE);
+	return (player_enum)static_cast<int>(line_ownership/this->board_size);
 }
 
-ticTacUtils::player_enum GameBoard::checkFilledLine(
-	ticTacUtils::line_type line, ticTacUtils::cell_t rowCol
+player_enum GameBoard::checkFilledLine(
+	line_type line, ticTacUtils::cell_t rowCol
 	) {
-	int line_ownership = (int)ticTacUtils::NONE; int iterator = 0;
-	for ( auto iterator = 0; iterator < BOARDSIZE; iterator++ ) {
+	int line_ownership = (int)player_enum::none; int iterator = 0;
+	for ( auto iterator = 0; iterator < this->board_size; iterator++ ) {
 		switch (line) {
-			case ticTacUtils::ROW: {
+			case line_type::row: {
 				line_ownership += (int)this->current_board.at(
-					ticTacUtils::convertRowColToIndex(rowCol[0],iterator,BOARDSIZE)
+					ticTacUtils::convertRowColToIndex(rowCol[0],iterator,this->board_size)
 					); break;
 			}
-			case ticTacUtils::COLUMN: {
+			case line_type::column: {
 				line_ownership += (int)this->current_board.at(
-					ticTacUtils::convertRowColToIndex(iterator,rowCol[1],BOARDSIZE)
+					ticTacUtils::convertRowColToIndex(iterator,rowCol[1],this->board_size)
 					); break;
 			}
 			default:
-				return ticTacUtils::NONE;
+				return player_enum::none;
 		}
 	}
-	return (ticTacUtils::player_enum)static_cast<int>(line_ownership/BOARDSIZE);
+	return (player_enum)static_cast<int>(line_ownership/this->board_size);
 }
 
 bool GameBoard::isBoardFilled() {
-	for ( int num_row = 0; num_row < BOARDSIZE; num_row++) {
-		for ( int num_column = 0; num_column < BOARDSIZE; num_column++) {
+	for ( int num_row = 0; num_row < this->board_size; num_row++) {
+		for ( int num_column = 0; num_column < this->board_size; num_column++) {
 			if(current_board.at(
-				ticTacUtils::convertRowColToIndex(num_row, num_column, BOARDSIZE)
-				) == ticTacUtils::NONE) {
+				ticTacUtils::convertRowColToIndex(num_row, num_column, this->board_size)
+				) == player_enum::none) {
 				return false;
 			}
 		}
@@ -171,38 +187,38 @@ bool GameBoard::isBoardFilled() {
 
 int GameBoard::isGameOver() {
 	ticTacUtils::cell_t rowCol = {0,0};
-	for (; rowCol[0] < BOARDSIZE; rowCol[0]++) {
-		for (; rowCol[1] < BOARDSIZE; rowCol[1]++) {
+	for (; rowCol[0] < this->board_size; rowCol[0]++) {
+		for (; rowCol[1] < this->board_size; rowCol[1]++) {
 			if (
 				this->current_board.at(
-					ticTacUtils::convertCellToIndex(rowCol,BOARDSIZE)
-					) != ticTacUtils::NONE
+					ticTacUtils::convertCellToIndex(rowCol,this->board_size)
+					) != player_enum::none
 				) {
-				this->line_occupancy[ticTacUtils::ROW + rowCol[0]] =
-					this->checkFilledLine(ticTacUtils::ROW,rowCol);
+				this->line_occupancy.at(rowCol[0]) =
+					this->checkFilledLine(line_type::row,rowCol);
 
-				this->line_occupancy[ticTacUtils::COLUMN + rowCol[1]] =
-					this->checkFilledLine(ticTacUtils::COLUMN,rowCol);
+				this->line_occupancy.at(this->board_size + rowCol[1]) =
+					this->checkFilledLine(line_type::column,rowCol);
 			}
 		}
 	}
-	this->line_occupancy[ticTacUtils::LR_DIAGONAL] =
-		this->checkFilledLine(ticTacUtils::LR_DIAGONAL);
+	this->line_occupancy.at(2*this->board_size) =
+		this->checkFilledLine(line_type::lr_diagonal);
 
-	this->line_occupancy[ticTacUtils::RL_DIAGONAL] =
-		this->checkFilledLine(ticTacUtils::RL_DIAGONAL);
+	this->line_occupancy.at(2*this->board_size + 1) =
+		this->checkFilledLine(line_type::rl_diagonal);
 
 	int value = 0;
 	for ( int iterator = 0; iterator < this->line_occupancy.size(); iterator++ ) {
-		if( line_occupancy[iterator] !=  ticTacUtils::NONE) {
-			this->who_won = line_occupancy[iterator];
-			return this->who_won;
+		if( line_occupancy.at(iterator) !=  player_enum::none) {
+			this->who_won = line_occupancy.at(iterator);
+			return (int)this->who_won;
 		}
 	}
 
 	if( this->isBoardFilled() ) {
-		this->who_won = ticTacUtils::NONE;
-		return this->who_won;
+		this->who_won = player_enum::none;
+		return (int)this->who_won;
 	}
 	return GAME_NOT_OVER;
 }
@@ -210,7 +226,7 @@ int GameBoard::isGameOver() {
 
 ticTacUtils::cell_t GameBoard::processKeyboardInput(std::string userInput) {
 	ticTacUtils::cell_t rowCol;
-	if (int(userInput.at(0)) < int('1') + BOARDSIZE) {
+	if (int(userInput.at(0)) < int('1') + this->board_size) {
 		rowCol[0] = int(userInput.at(0)) - int('1');
 	}
 	else {
@@ -218,13 +234,13 @@ ticTacUtils::cell_t GameBoard::processKeyboardInput(std::string userInput) {
 	}
 	if (
 		(int)userInput.at(1) >= (int)'A'
-		&& (int)userInput.at(1) <= (int)'A'+BOARDSIZE-1
+		&& (int)userInput.at(1) <= (int)'A'+this->board_size-1
 		) {
 		rowCol[1] = int(userInput.at(1)) - int('A');
 	}
 	else if (
 		(int)userInput.at(1) >= 'a'
-		&& (int)userInput.at(1) <= (int)'a'+BOARDSIZE-1
+		&& (int)userInput.at(1) <= (int)'a'+this->board_size-1
 		) {
 		rowCol[1] = int(userInput.at(1)) - int('a');
 	}
@@ -235,8 +251,8 @@ ticTacUtils::cell_t GameBoard::processKeyboardInput(std::string userInput) {
 }
 
 int GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
-	if( inputCell[0] <0 || inputCell[0] >= BOARDSIZE ||
-		inputCell[1] <0 || inputCell[1] >= BOARDSIZE) {
+	if( inputCell[0] <0 || inputCell[0] >= this->board_size ||
+		inputCell[1] <0 || inputCell[1] >= this->board_size) {
 		std::cout<<"\n Invalid cell number!"
 			<<" Must be in format RowColumn [e.g. 1A, 2b, 3C ]\n";
 		return 0;
@@ -244,28 +260,22 @@ int GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
 	else {
 		if (
 			this->current_board.at(
-				ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
-				) != ticTacUtils::NONE
+				ticTacUtils::convertCellToIndex(inputCell,this->board_size)
+				) != player_enum::none
 			) {
 			std::cout<<"\n Invalid cell number! Must be unoccupied!\n";
 			return 0;
 		}
 		else {
 			if( is_player_0) {
-				this->player_0_board.at(
-					ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
-					) = ticTacUtils::PLAYER_0;
 				this->current_board.at(
-					ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
-					)  = ticTacUtils::PLAYER_0;
+					ticTacUtils::convertCellToIndex(inputCell,this->board_size)
+					)  = player_enum::player_0;
 			}
 			else {
-				this->player_X_board.at(
-					ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
-					) = ticTacUtils::PLAYER_X;
 				this->current_board.at(
-					ticTacUtils::convertCellToIndex(inputCell,BOARDSIZE)
-					)  = ticTacUtils::PLAYER_X;
+					ticTacUtils::convertCellToIndex(inputCell,this->board_size)
+					)  = player_enum::player_x;
 			}
 		}
 	}

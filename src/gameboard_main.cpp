@@ -2,15 +2,16 @@
 #include "../include/gameboard.cc"
 
 int main(int argc, char** argv) {
+	int board_size = ticTacUtils::promptBoardSize();
 	bool playAgain = false;
 	do {
 		std::cout<< " \nTic - Tac - Toe Game Started \n Players : 0, X\n"
 			<<"\nPlayer 0 starts\n\n";
 
-		std::array<ticTacUtils::player_enum,2> game_players
-				= { ticTacUtils::PLAYER_0, ticTacUtils::PLAYER_X };
+		std::array<player_enum,2> game_players
+				= { player_enum::player_0, player_enum::player_x };
 
-		std::vector<std::pair<ticTacUtils::player_enum,bool>> who_is_bot;
+		std::vector<std::pair<player_enum,bool>> who_is_bot;
 
 		auto player_iterator = game_players.begin();
 
@@ -36,7 +37,7 @@ int main(int argc, char** argv) {
 		bool show_game_steps
 			= !(who_is_bot[is_current_player_0].second
 				&& who_is_bot[!is_current_player_0].second);
-		GameBoard current_game(show_game_steps);
+		GameBoard current_game(show_game_steps, board_size);
 		current_game.showBoard();
 
 		while( is_game_active ) {
