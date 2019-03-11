@@ -7,10 +7,8 @@
 
 2. Exit using shortcut Ctrl+C
 
-####Note:
-The code is scaleable for different board sizes. Simply choose when you first start the game.
-####Assumptions:
-1. There are only 2 players
+#### Note:
+The code is scaleable for different board sizes. Simply choose when you first start the game. It is assumed that there are only 2 players.
 
 ##### Developer Note:
 Recompile using-
