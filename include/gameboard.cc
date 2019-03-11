@@ -250,12 +250,12 @@ ticTacUtils::cell_t GameBoard::processKeyboardInput(std::string userInput) {
 	return rowCol;
 }
 
-int GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
+bool GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
 	if( inputCell[0] <0 || inputCell[0] >= this->board_size ||
 		inputCell[1] <0 || inputCell[1] >= this->board_size) {
 		std::cout<<"\n Invalid cell number!"
 			<<" Must be in format RowColumn [e.g. 1A, 2b, 3C ]\n";
-		return 0;
+		return false;
 	}
 	else {
 		if (
@@ -264,7 +264,7 @@ int GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
 				) != player_enum::none
 			) {
 			std::cout<<"\n Invalid cell number! Must be unoccupied!\n";
-			return 0;
+			return false;
 		}
 		else {
 			if( is_player_0) {
@@ -281,18 +281,18 @@ int GameBoard::playMove(ticTacUtils::cell_t inputCell, bool is_player_0) {
 	}
 	int size = this->emptyCells.size();
 	this->emptyCells.remove(inputCell);
-	return 1;
+	return true;
 }
 
 
-int GameBoard::playMove(std::string userInput, bool is_player_0) {
+bool GameBoard::playMove(std::string userInput, bool is_player_0) {
 	auto rowCol = this->processKeyboardInput(userInput);
 	return this->playMove(rowCol, is_player_0);
 }
 
-int GameBoard::playRandomMove(bool is_player_0) {
+bool GameBoard::playRandomMove(bool is_player_0) {
 	if (this->emptyCells.size() == 0) {
-		return 0;
+		return false;
 	}
 	auto random_move = *ticTacUtils::get_random_from_list(this->emptyCells);
 	this->emptyCells.remove(random_move);

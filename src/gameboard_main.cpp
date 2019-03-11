@@ -43,11 +43,11 @@ int main(int argc, char** argv) {
 		while( is_game_active ) {
 			std::string current_move;
 			do {
-				int isMoveValid;
+				bool is_move_valid;
 				if (who_is_bot[!is_current_player_0].second) {
 					do {
-						isMoveValid = current_game.playRandomMove(is_current_player_0);
-					} while (!isMoveValid);
+						is_move_valid = current_game.playRandomMove(is_current_player_0);
+					} while (!is_move_valid);
 				}
 				else {
 					do {
@@ -55,8 +55,8 @@ int main(int argc, char** argv) {
 							<<ticTacUtils::player_name[game_players[(int)!is_current_player_0]]
 							<<" [e.g. 1A , 2B, 3C] : ";
 						std::cin>>current_move;
-						isMoveValid = current_game.playMove(current_move,is_current_player_0);
-					} while (!isMoveValid);
+						is_move_valid = current_game.playMove(current_move,is_current_player_0);
+					} while (!is_move_valid);
 				}
 				is_current_player_0 = !is_current_player_0;
 				current_game.showBoard();

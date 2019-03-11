@@ -1,14 +1,7 @@
 #ifndef GAMEBOARD_H
 #define GAMEBOARD_H
 
-#define OCC_PLAYER_1    1
-#define OCC_PLAYER_2   -1
-#define OCC_PLAYER_MIX  0
-#define UNOCCUPIED      0
-#define GAME_OVER_1		1
-#define GAME_OVER_2	   -1
 #define GAME_NOT_OVER	999
-#define BOARDSIZE       3
 
 #include <array>
 #include <string>
@@ -89,11 +82,11 @@ public:
 	bool						isBoardFilled();
 	int 						isGameOver();
 	ticTacUtils::cell_t			processKeyboardInput(std::string userInput);
-	int 						playMove(ticTacUtils::cell_t inputCell,
+	bool 						playMove(ticTacUtils::cell_t inputCell,
 											bool is_player_0);
-	int 						playMove(std::string userInput,
+	bool 						playMove(std::string userInput,
 											bool is_player_0);
-	int							playRandomMove(bool is_player_0);
+	bool						playRandomMove(bool is_player_0);
 	void						showBoard(bool visualize = false);
 	std::string					whoWon();
 	void						activateVisualization();
