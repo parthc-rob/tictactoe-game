@@ -9,6 +9,7 @@
 
 #### Note:
 The code is scaleable for different board sizes. Simply choose when you first start the game. It is assumed that there are only 2 players.
+You can choose any of the two players to either take human input or run a random bot.
 
 ##### Developer Note:
 Recompile using-
