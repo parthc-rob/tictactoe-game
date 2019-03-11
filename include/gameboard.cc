@@ -89,13 +89,17 @@ int	ticTacUtils::promptBoardSize() {
 
 ////////// Class Definitions
 GameBoard::GameBoard(bool vis, int size) : board_size(size),visualize(vis) {
-	ticTacUtils::reset_board(this->current_board,this->line_occupancy,this->board_size);
+	ticTacUtils::reset_board(
+		this->current_board,this->line_occupancy,this->board_size
+		);
 	this->resetEmptyCells();
 	this->who_won 				= player_enum::none;
 	this->is_game_over 			= GAME_NOT_OVER;
 }
 void GameBoard::resetBoard() {
-	ticTacUtils::reset_board(this->current_board,line_occupancy,this->board_size);
+	ticTacUtils::reset_board(
+		this->current_board,line_occupancy,this->board_size
+		);
 	this->resetEmptyCells();
 }
 void GameBoard::resetEmptyCells() {
@@ -157,12 +161,16 @@ player_enum GameBoard::checkFilledLine(
 		switch (line) {
 			case line_type::row: {
 				line_ownership += (int)this->current_board.at(
-					ticTacUtils::convertRowColToIndex(rowCol[0],iterator,this->board_size)
+					ticTacUtils::convertRowColToIndex(
+						rowCol[0],iterator,this->board_size
+						)
 					); break;
 			}
 			case line_type::column: {
 				line_ownership += (int)this->current_board.at(
-					ticTacUtils::convertRowColToIndex(iterator,rowCol[1],this->board_size)
+					ticTacUtils::convertRowColToIndex(
+						iterator,rowCol[1],this->board_size
+						)
 					); break;
 			}
 			default:
@@ -174,9 +182,13 @@ player_enum GameBoard::checkFilledLine(
 
 bool GameBoard::isBoardFilled() {
 	for ( int num_row = 0; num_row < this->board_size; num_row++) {
-		for ( int num_column = 0; num_column < this->board_size; num_column++) {
+		for ( int num_column = 0;
+				num_column < this->board_size;
+				num_column++) {
 			if(current_board.at(
-				ticTacUtils::convertRowColToIndex(num_row, num_column, this->board_size)
+				ticTacUtils::convertRowColToIndex(
+					num_row, num_column, this->board_size
+					)
 				) == player_enum::none) {
 				return false;
 			}
@@ -209,7 +221,9 @@ int GameBoard::isGameOver() {
 		this->checkFilledLine(line_type::rl_diagonal);
 
 	int value = 0;
-	for ( int iterator = 0; iterator < this->line_occupancy.size(); iterator++ ) {
+	for ( int iterator = 0;
+			iterator < this->line_occupancy.size();
+			iterator++ ) {
 		if( line_occupancy.at(iterator) !=  player_enum::none) {
 			this->who_won = line_occupancy.at(iterator);
 			return (int)this->who_won;

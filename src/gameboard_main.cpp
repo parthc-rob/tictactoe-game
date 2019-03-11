@@ -17,12 +17,15 @@ int main(int argc, char** argv) {
 
 		while(player_iterator != game_players.end()) {
 			int keyInput;
-			std::cout<<"\nChoose Player "<<ticTacUtils::player_symbol[*player_iterator];
+			std::cout<<"\nChoose Player "
+				<<ticTacUtils::player_symbol[*player_iterator];
 			std::cout<<" :\n0\t: Human\n1\t: Random bot\n";
 
 			std::cin>>keyInput;
 			if (keyInput == 0 || keyInput == 1) {
-				who_is_bot.push_back(std::make_pair(*player_iterator,(bool)keyInput));
+				who_is_bot.push_back(
+					std::make_pair(*player_iterator,(bool)keyInput)
+					);
 				player_iterator++;
 			}
 			else {
@@ -45,16 +48,21 @@ int main(int argc, char** argv) {
 				bool is_move_valid;
 				if (who_is_bot[!is_current_player_0].second) {
 					do {
-						is_move_valid = current_game.playRandomMove(is_current_player_0);
+						is_move_valid =
+							current_game.playRandomMove(is_current_player_0);
 					} while (!is_move_valid);
 				}
 				else {
 					do {
 						std::cout<<"Enter a move, "
-							<<ticTacUtils::player_name[game_players[(int)!is_current_player_0]]
+							<<ticTacUtils::player_name[
+								game_players[(int)!is_current_player_0]
+								]
 							<<" [e.g. 1A , 2B, 3C] : ";
 						std::cin>>current_move;
-						is_move_valid = current_game.playMove(current_move,is_current_player_0);
+						is_move_valid =
+							current_game.playMove(
+								current_move,is_current_player_0);
 					} while (!is_move_valid);
 				}
 				is_current_player_0 = !is_current_player_0;
